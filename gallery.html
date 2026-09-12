@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="bn">
 
 <head>
@@ -12,6 +13,10 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
+
+/* =========================
+   GALLERY PAGE
+========================= */
 
 .gallery-page {
     min-height: 100vh;
@@ -95,6 +100,7 @@
     display: block;
     object-fit: cover;
     background: #111;
+    cursor: pointer;
 }
 
 .gallery-card iframe {
@@ -131,6 +137,196 @@
     padding: 50px 20px;
 }
 
+
+/* =========================
+   PHOTO LIGHTBOX
+========================= */
+
+.photo-lightbox {
+    position: fixed;
+    inset: 0;
+
+    z-index: 99999;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(0, 0, 0, 0.96);
+
+    padding: 70px 80px 80px;
+
+    overflow: hidden;
+}
+
+.photo-lightbox.show {
+    display: flex;
+}
+
+.lightbox-image {
+    max-width: 90vw;
+    max-height: 82vh;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,.7);
+
+    user-select: none;
+}
+
+
+/* Close */
+
+.lightbox-close {
+    position: absolute;
+
+    top: 18px;
+    right: 25px;
+
+    width: 48px;
+    height: 48px;
+
+    border: 1px solid rgba(212,175,55,.6);
+
+    border-radius: 50%;
+
+    background: rgba(20,20,20,.8);
+
+    color: #d4af37;
+
+    font-size: 30px;
+
+    line-height: 42px;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+    z-index: 3;
+}
+
+.lightbox-close:hover {
+    background: #d4af37;
+    color: #080808;
+}
+
+
+/* Previous / Next */
+
+.lightbox-prev,
+.lightbox-next {
+
+    position: absolute;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 55px;
+    height: 55px;
+
+    border: 1px solid rgba(212,175,55,.6);
+
+    border-radius: 50%;
+
+    background: rgba(15,15,15,.85);
+
+    color: #d4af37;
+
+    font-size: 35px;
+
+    line-height: 45px;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+    z-index: 3;
+}
+
+.lightbox-prev {
+    left: 20px;
+}
+
+.lightbox-next {
+    right: 20px;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background: #d4af37;
+    color: #080808;
+}
+
+
+/* Photo counter */
+
+.lightbox-counter {
+
+    position: absolute;
+
+    bottom: 25px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    color: #d4af37;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    background: rgba(0,0,0,.6);
+
+    padding: 8px 16px;
+
+    border-radius: 20px;
+}
+
+
+/* Photo name */
+
+.lightbox-name {
+
+    position: absolute;
+
+    bottom: 60px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    max-width: 80%;
+
+    color: #ddd;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
 @media (max-width: 900px) {
 
     .gallery-grid {
@@ -144,6 +340,11 @@
     }
 
 }
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 550px) {
 
@@ -171,309 +372,422 @@
         padding: 9px 5px;
     }
 
+
+    /* Mobile Lightbox */
+
+    .photo-lightbox {
+        padding: 60px 50px 70px;
+    }
+
+    .lightbox-image {
+        max-width: 94vw;
+        max-height: 78vh;
+    }
+
+    .lightbox-close {
+        top: 12px;
+        right: 12px;
+
+        width: 42px;
+        height: 42px;
+
+        font-size: 25px;
+
+        line-height: 36px;
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+        width: 42px;
+        height: 42px;
+
+        font-size: 27px;
+
+        line-height: 32px;
+    }
+
+    .lightbox-prev {
+        left: 8px;
+    }
+
+    .lightbox-next {
+        right: 8px;
+    }
+
+    .lightbox-counter {
+        bottom: 15px;
+        font-size: 12px;
+    }
+
+    .lightbox-name {
+        bottom: 48px;
+        font-size: 11px;
+    }
+
 }
 
 </style>
 
 </head>
 
-
 <body>
 
-
-<!-- HEADER -->
+<!-- =========================
+     HEADER
+========================= -->
 
 <header class="header">
 
-    <a
-        href="index.html"
-        class="site-logo"
+```
+<a
+    href="index.html"
+    class="site-logo"
+>
+
+    <img
+        src="images/logo/logo.png"
+        alt="Mondal Digital Studio"
     >
 
-        <img
-            src="images/logo/logo.png"
-            alt="Mondal Digital Studio"
-        >
+</a>
 
+
+<nav class="nav">
+
+    <a href="index.html">
+        Home
     </a>
 
+    <a href="index.html#services">
+        Services
+    </a>
 
-    <nav class="nav">
+    <a href="gallery.html">
+        Gallery
+    </a>
 
-        <a href="index.html">
-            Home
-        </a>
+    <a href="index.html#about">
+        About
+    </a>
 
-        <a href="index.html#services">
-            Services
-        </a>
+    <a href="index.html#contact">
+        Contact
+    </a>
 
-        <a href="gallery.html">
-            Gallery
-        </a>
-
-        <a href="index.html#about">
-            About
-        </a>
-
-        <a href="index.html#contact">
-            Contact
-        </a>
-
-    </nav>
+</nav>
+```
 
 </header>
+
+<!-- =========================
+     GALLERY
+========================= -->
+
+<main class="gallery-page">
+
+```
+<a
+    href="index.html"
+    class="btn outline-btn back-home"
+>
+    ← BACK TO HOME
+</a>
+
+
+<div class="section-title">
+
+    <p>
+        MONDAL DIGITAL STUDIO
+    </p>
+
+    <h2>
+        Photo &
+        <span>Video Gallery</span>
+    </h2>
+
+    <div class="gold-line"></div>
+
+</div>
+
+
+
+<!-- CATEGORY BUTTONS -->
+
+<div class="gallery-buttons">
+
+
+    <button
+        class="gallery-btn active"
+        onclick="loadGallery('haldi-photo', this)"
+    >
+        📸 Haldi Photo
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('outdoor-photo', this)"
+    >
+        📸 Outdoor Photo
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('reception-photo', this)"
+    >
+        📸 Reception Photo
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('wedding-photo', this)"
+    >
+        📸 Wedding Photo
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('pre-wedding-photo', this)"
+    >
+        📸 Pre-Wedding Photo
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('wedding-video', this)"
+    >
+        🎬 Wedding Video
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('haldi-video', this)"
+    >
+        🎬 Haldi Video
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('reception-video', this)"
+    >
+        🎬 Reception Video
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('pre-wedding-video', this)"
+    >
+        🎬 Pre-Wedding Video
+    </button>
+
+
+    <button
+        class="gallery-btn"
+        onclick="loadGallery('teaser-video', this)"
+    >
+        🎬 Teaser Video
+    </button>
+
+
+</div>
+
+
+
+<!-- LOADING -->
+
+<div
+    id="loading"
+    class="loading"
+>
+
+    ছবি / ভিডিও লোড হচ্ছে...
+
+</div>
 
 
 
 <!-- GALLERY -->
 
-<main class="gallery-page">
-
-
-    <a
-        href="index.html"
-        class="btn outline-btn back-home"
-    >
-        ← BACK TO HOME
-    </a>
-
-
-    <div class="section-title">
-
-        <p>
-            MONDAL DIGITAL STUDIO
-        </p>
-
-        <h2>
-            Photo &
-            <span>Video Gallery</span>
-        </h2>
-
-        <div class="gold-line"></div>
-
-    </div>
+<div
+    id="galleryGrid"
+    class="gallery-grid"
+></div>
 
 
 
-    <!-- CATEGORY BUTTONS -->
+<!-- EMPTY -->
 
-    <div class="gallery-buttons">
+<div
+    id="empty"
+    class="empty"
+    style="display:none;"
+>
 
+    <h3>
+        এই Folder-এ এখনো কোনো
+        ছবি বা ভিডিও নেই।
+    </h3>
 
-        <button
-            class="gallery-btn active"
-            onclick="loadGallery('haldi-photo', this)"
-        >
-            📸 Haldi Photo
-        </button>
+    <p>
+        Google Drive-এর সংশ্লিষ্ট
+        Folder-এর ভিতরে file upload করুন।
+    </p>
 
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('outdoor-photo', this)"
-        >
-            📸 Outdoor Photo
-        </button>
-
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('reception-photo', this)"
-        >
-            📸 Reception Photo
-        </button>
-
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('wedding-photo', this)"
-        >
-            📸 Wedding Photo
-        </button>
-
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('pre-wedding-photo', this)"
-        >
-            📸 Pre-Wedding Photo
-        </button>
-
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('wedding-video', this)"
-        >
-            🎬 Wedding Video
-        </button>
-
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('haldi-video', this)"
-        >
-            🎬 Haldi Video
-        </button>
-
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('reception-video', this)"
-        >
-            🎬 Reception Video
-        </button>
-
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('pre-wedding-video', this)"
-        >
-            🎬 Pre-Wedding Video
-        </button>
-
-
-        <button
-            class="gallery-btn"
-            onclick="loadGallery('teaser-video', this)"
-        >
-            🎬 Teaser Video
-        </button>
-
-
-    </div>
+</div>
 
 
 
-    <!-- LOADING -->
+<!-- ERROR -->
 
-    <div
-        id="loading"
-        class="loading"
-    >
+<div
+    id="error"
+    class="error"
+    style="display:none;"
+>
 
-        ছবি / ভিডিও লোড হচ্ছে...
+    Gallery load করতে সমস্যা হয়েছে।
 
-    </div>
+    <br>
 
+    কিছুক্ষণ পরে আবার চেষ্টা করুন।
 
-
-    <!-- GALLERY -->
-
-    <div
-        id="galleryGrid"
-        class="gallery-grid"
-    ></div>
-
-
-
-    <!-- EMPTY -->
-
-    <div
-        id="empty"
-        class="empty"
-        style="display:none;"
-    >
-
-        <h3>
-            এই Folder-এ এখনো কোনো
-            ছবি বা ভিডিও নেই।
-        </h3>
-
-        <p>
-            Google Drive-এর সংশ্লিষ্ট
-            Folder-এর ভিতরে file upload করুন।
-        </p>
-
-    </div>
-
-
-
-    <!-- ERROR -->
-
-    <div
-        id="error"
-        class="error"
-        style="display:none;"
-    >
-
-        Gallery load করতে সমস্যা হয়েছে।
-
-        <br>
-
-        কিছুক্ষণ পরে আবার চেষ্টা করুন।
-
-    </div>
-
+</div>
+```
 
 </main>
 
+<!-- =========================
+     PHOTO LIGHTBOX
+========================= -->
+
+<div
+    id="photoLightbox"
+    class="photo-lightbox"
+>
+
+```
+<button
+    id="lightboxClose"
+    class="lightbox-close"
+    aria-label="Close"
+>
+    ×
+</button>
 
 
-<!-- FOOTER -->
+<button
+    id="lightboxPrev"
+    class="lightbox-prev"
+    aria-label="Previous photo"
+>
+    ‹
+</button>
+
+
+<img
+    id="lightboxImage"
+    class="lightbox-image"
+    src=""
+    alt=""
+>
+
+
+<button
+    id="lightboxNext"
+    class="lightbox-next"
+    aria-label="Next photo"
+>
+    ›
+</button>
+
+
+<div
+    id="lightboxName"
+    class="lightbox-name"
+></div>
+
+
+<div
+    id="lightboxCounter"
+    class="lightbox-counter"
+></div>
+```
+
+</div>
+
+<!-- =========================
+     FOOTER
+========================= -->
 
 <footer class="footer">
 
-    <a
-        href="index.html"
-        class="site-logo"
+```
+<a
+    href="index.html"
+    class="site-logo"
+>
+
+    <img
+        src="images/logo/logo.png"
+        alt="Mondal Digital Studio"
     >
 
-        <img
-            src="images/logo/logo.png"
-            alt="Mondal Digital Studio"
-        >
+</a>
 
+
+<p>
+    Wedding Photography &
+    Cinematic Videography
+</p>
+
+
+<div class="footer-links">
+
+    <a href="index.html">
+        Home
     </a>
 
+    <a href="index.html#services">
+        Services
+    </a>
 
-    <p>
-        Wedding Photography &
-        Cinematic Videography
-    </p>
+    <a href="gallery.html">
+        Gallery
+    </a>
 
+    <a href="index.html#about">
+        About
+    </a>
 
-    <div class="footer-links">
+    <a href="index.html#contact">
+        Contact
+    </a>
 
-        <a href="index.html">
-            Home
-        </a>
-
-        <a href="index.html#services">
-            Services
-        </a>
-
-        <a href="gallery.html">
-            Gallery
-        </a>
-
-        <a href="index.html#about">
-            About
-        </a>
-
-        <a href="index.html#contact">
-            Contact
-        </a>
-
-    </div>
+</div>
 
 
-    <div class="copyright">
+<div class="copyright">
 
-        © 2026 Mondal Digital Studio.
-        All Rights Reserved.
+    © 2026 Mondal Digital Studio.
+    All Rights Reserved.
 
-    </div>
+</div>
+```
 
 </footer>
-
-
 
 <script>
 
 
 /* =================================
-   NEW APPS SCRIPT URL
+   APPS SCRIPT URL
 ================================= */
 
 const APPS_SCRIPT_URL =
@@ -504,6 +818,55 @@ const errorBox =
     document.getElementById(
         "error"
     );
+
+
+/* =================================
+   LIGHTBOX ELEMENTS
+================================= */
+
+const photoLightbox =
+    document.getElementById(
+        "photoLightbox"
+    );
+
+const lightboxImage =
+    document.getElementById(
+        "lightboxImage"
+    );
+
+const lightboxClose =
+    document.getElementById(
+        "lightboxClose"
+    );
+
+const lightboxPrev =
+    document.getElementById(
+        "lightboxPrev"
+    );
+
+const lightboxNext =
+    document.getElementById(
+        "lightboxNext"
+    );
+
+const lightboxName =
+    document.getElementById(
+        "lightboxName"
+    );
+
+const lightboxCounter =
+    document.getElementById(
+        "lightboxCounter"
+    );
+
+
+/* =================================
+   CURRENT PHOTOS
+================================= */
+
+let currentPhotos = [];
+
+let currentPhotoIndex = 0;
 
 
 
@@ -543,6 +906,10 @@ async function loadGallery(
 
     galleryGrid.innerHTML = "";
 
+    currentPhotos = [];
+
+    currentPhotoIndex = 0;
+
     loading.style.display =
         "block";
 
@@ -551,6 +918,11 @@ async function loadGallery(
 
     errorBox.style.display =
         "none";
+
+
+    /* CLOSE LIGHTBOX */
+
+    closeLightbox();
 
 
     try {
@@ -604,6 +976,16 @@ async function loadGallery(
         }
 
 
+        /* SAVE PHOTOS */
+
+        currentPhotos =
+            files.filter(function(file) {
+
+                return file.type === "photo";
+
+            });
+
+
         /* SHOW FILES */
 
         files.forEach(function(file) {
@@ -627,26 +1009,43 @@ async function loadGallery(
             ) {
 
 
+                const photoIndex =
+                    currentPhotos.indexOf(
+                        file
+                    );
+
+
                 card.innerHTML = `
 
-                    <a
-                        href="${file.url}"
-                        target="_blank"
+                    <img
+                        src="${file.url}&t=${Date.now()}"
+                        alt="${escapeHtml(file.name)}"
+                        loading="lazy"
                     >
-
-                        <img
-                            src="${file.url}&t=${Date.now()}"
-                            alt="${escapeHtml(file.name)}"
-                            loading="lazy"
-                        >
-
-                    </a>
 
                     <div class="gallery-name">
                         ${escapeHtml(file.name)}
                     </div>
 
                 `;
+
+
+                const image =
+                    card.querySelector(
+                        "img"
+                    );
+
+
+                image.addEventListener(
+                    "click",
+                    function() {
+
+                        openLightbox(
+                            photoIndex
+                        );
+
+                    }
+                );
 
             }
 
@@ -703,17 +1102,387 @@ async function loadGallery(
 
 
 /* =================================
+   OPEN LIGHTBOX
+================================= */
+
+function openLightbox(index) {
+
+    if (
+        !currentPhotos ||
+        currentPhotos.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    currentPhotoIndex = index;
+
+    updateLightbox();
+
+
+    photoLightbox.classList.add(
+        "show"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+
+/* =================================
+   UPDATE LIGHTBOX
+================================= */
+
+function updateLightbox() {
+
+    const photo =
+        currentPhotos[
+            currentPhotoIndex
+        ];
+
+
+    if (!photo) {
+        return;
+    }
+
+
+    lightboxImage.src =
+        photo.url +
+        "&t=" +
+        Date.now();
+
+
+    lightboxImage.alt =
+        photo.name || "Photo";
+
+
+    lightboxName.textContent =
+        photo.name || "";
+
+
+    lightboxCounter.textContent =
+        (
+            currentPhotoIndex + 1
+        ) +
+        " / " +
+        currentPhotos.length;
+
+
+    /* HIDE ARROWS IF ONLY ONE PHOTO */
+
+    if (
+        currentPhotos.length <= 1
+    ) {
+
+        lightboxPrev.style.display =
+            "none";
+
+        lightboxNext.style.display =
+            "none";
+
+    }
+
+    else {
+
+        lightboxPrev.style.display =
+            "block";
+
+        lightboxNext.style.display =
+            "block";
+
+    }
+
+}
+
+
+
+/* =================================
+   PREVIOUS
+================================= */
+
+function previousPhoto() {
+
+    if (
+        currentPhotos.length <= 1
+    ) {
+
+        return;
+
+    }
+
+
+    currentPhotoIndex--;
+
+    if (
+        currentPhotoIndex < 0
+    ) {
+
+        currentPhotoIndex =
+            currentPhotos.length - 1;
+
+    }
+
+
+    updateLightbox();
+
+}
+
+
+
+/* =================================
+   NEXT
+================================= */
+
+function nextPhoto() {
+
+    if (
+        currentPhotos.length <= 1
+    ) {
+
+        return;
+
+    }
+
+
+    currentPhotoIndex++;
+
+    if (
+        currentPhotoIndex >=
+        currentPhotos.length
+    ) {
+
+        currentPhotoIndex = 0;
+
+    }
+
+
+    updateLightbox();
+
+}
+
+
+
+/* =================================
+   CLOSE
+================================= */
+
+function closeLightbox() {
+
+    photoLightbox.classList.remove(
+        "show"
+    );
+
+    document.body.style.overflow =
+        "";
+
+    lightboxImage.src = "";
+
+}
+
+
+
+/* =================================
+   BUTTON EVENTS
+================================= */
+
+lightboxClose.addEventListener(
+    "click",
+    closeLightbox
+);
+
+lightboxPrev.addEventListener(
+    "click",
+    previousPhoto
+);
+
+lightboxNext.addEventListener(
+    "click",
+    nextPhoto
+);
+
+
+
+/* =================================
+   BACKGROUND CLICK = CLOSE
+================================= */
+
+photoLightbox.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target ===
+            photoLightbox
+        ) {
+
+            closeLightbox();
+
+        }
+
+    }
+);
+
+
+
+/* =================================
+   KEYBOARD
+================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+
+        if (
+            !photoLightbox.classList.contains(
+                "show"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closeLightbox();
+
+        }
+
+
+        else if (
+            event.key ===
+            "ArrowLeft"
+        ) {
+
+            previousPhoto();
+
+        }
+
+
+        else if (
+            event.key ===
+            "ArrowRight"
+        ) {
+
+            nextPhoto();
+
+        }
+
+    }
+);
+
+
+
+/* =================================
+   TOUCH SWIPE
+================================= */
+
+let touchStartX = 0;
+
+let touchEndX = 0;
+
+
+photoLightbox.addEventListener(
+    "touchstart",
+    function(event) {
+
+        touchStartX =
+            event.changedTouches[0].screenX;
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+photoLightbox.addEventListener(
+    "touchend",
+    function(event) {
+
+        touchEndX =
+            event.changedTouches[0].screenX;
+
+        handleSwipe();
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+function handleSwipe() {
+
+    const difference =
+        touchStartX -
+        touchEndX;
+
+
+    if (
+        Math.abs(difference) < 50
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        difference > 0
+    ) {
+
+        nextPhoto();
+
+    }
+
+    else {
+
+        previousPhoto();
+
+    }
+
+}
+
+
+
+/* =================================
    HTML ESCAPE
 ================================= */
 
 function escapeHtml(text) {
 
     return String(text || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
@@ -732,7 +1501,6 @@ loadGallery(
 
 
 </script>
-
 
 </body>
 
