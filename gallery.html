@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gallery | Mondal Digital Studio</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+.gallery-page {
+    min-height: 100vh;
+    padding: 70px 5% 100px;
+    background: linear-gradient(135deg, #080808, #151515, #080808);
+}
+
+.back-home {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 30px;
+}
+
+.gallery-buttons {
+    max-width: 1200px;
+    margin: 30px auto 40px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gallery-btn {
+    padding: 11px 18px;
+    border: 1px solid #d4af37;
+    border-radius: 30px;
+    background: transparent;
+    color: #d4af37;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: .3s;
+}
+
+.gallery-btn:hover,
+.gallery-btn.active {
+    background: #d4af37;
+    color: #080808;
+}
+
+.loading {
+    text-align: center;
+    color: #d4af37;
+    padding: 50px 20px;
+    font-size: 18px;
+}
+
+.gallery-grid {
+    width: 100%;
+    max-width: 1400px;
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+.gallery-card {
+    background: #151515;
+    border: 1px solid #333;
+    border-radius: 15px;
+    overflow: hidden;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.35);
+
+    transition: .3s;
+}
+
+.gallery-card:hover {
+    transform: translateY(-5px);
+    border-color: #d4af37;
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 300px;
+    display: block;
+    object-fit: cover;
+    background: #111;
+}
+
+.gallery-card iframe {
+    width: 100%;
+    height: 300px;
+    display: block;
+    border: 0;
+    background: #000;
+}
+
+.gallery-name {
+    padding: 12px;
+    text-align: center;
+    color: #ddd;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.empty {
+    text-align: center;
+    color: #999;
+    padding: 60px 20px;
+}
+
+.empty h3 {
+    color: #d4af37;
+}
+
+.error {
+    text-align: center;
+    color: #ff7777;
+    padding: 50px 20px;
+}
+
+@media (max-width: 900px) {
+
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .gallery-card img,
+    .gallery-card iframe {
+        height: 240px;
+    }
+
+}
+
+@media (max-width: 550px) {
+
+    .gallery-page {
+        padding: 50px 10px 70px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .gallery-card img,
+    .gallery-card iframe {
+        height: 180px;
+    }
+
+    .gallery-btn {
+        padding: 9px 12px;
+        font-size: 11px;
+    }
+
+    .gallery-name {
+        font-size: 11px;
+        padding: 9px 5px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <a
+        href="index.html"
+        class="site-logo"
+    >
+
+        <img
+            src="images/logo/logo.png"
+            alt="Mondal Digital Studio"
+        >
+
+    </a>
+
+
+    <nav class="nav">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="index.html#services">
+            Services
+        </a>
+
+        <a href="gallery.html">
+            Gallery
+        </a>
+
+        <a href="index.html#about">
+            About
+        </a>
+
+        <a href="index.html#contact">
+            Contact
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<!-- GALLERY -->
+
+<main class="gallery-page">
+
+
+    <a
+        href="index.html"
+        class="btn outline-btn back-home"
+    >
+        ← BACK TO HOME
+    </a>
+
+
+    <div class="section-title">
+
+        <p>
+            MONDAL DIGITAL STUDIO
+        </p>
+
+        <h2>
+            Photo &
+            <span>Video Gallery</span>
+        </h2>
+
+        <div class="gold-line"></div>
+
+    </div>
+
+
+
+    <!-- CATEGORY BUTTONS -->
+
+    <div class="gallery-buttons">
+
+
+        <button
+            class="gallery-btn active"
+            onclick="loadGallery('haldi-photo', this)"
+        >
+            📸 Haldi Photo
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('outdoor-photo', this)"
+        >
+            📸 Outdoor Photo
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('reception-photo', this)"
+        >
+            📸 Reception Photo
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('wedding-photo', this)"
+        >
+            📸 Wedding Photo
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('pre-wedding-photo', this)"
+        >
+            📸 Pre-Wedding Photo
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('wedding-video', this)"
+        >
+            🎬 Wedding Video
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('haldi-video', this)"
+        >
+            🎬 Haldi Video
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('reception-video', this)"
+        >
+            🎬 Reception Video
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('pre-wedding-video', this)"
+        >
+            🎬 Pre-Wedding Video
+        </button>
+
+
+        <button
+            class="gallery-btn"
+            onclick="loadGallery('teaser-video', this)"
+        >
+            🎬 Teaser Video
+        </button>
+
+
+    </div>
+
+
+
+    <!-- LOADING -->
+
+    <div
+        id="loading"
+        class="loading"
+    >
+
+        ছবি / ভিডিও লোড হচ্ছে...
+
+    </div>
+
+
+
+    <!-- GALLERY -->
+
+    <div
+        id="galleryGrid"
+        class="gallery-grid"
+    ></div>
+
+
+
+    <!-- EMPTY -->
+
+    <div
+        id="empty"
+        class="empty"
+        style="display:none;"
+    >
+
+        <h3>
+            এই Folder-এ এখনো কোনো
+            ছবি বা ভিডিও নেই।
+        </h3>
+
+        <p>
+            Google Drive-এর সংশ্লিষ্ট
+            Folder-এর ভিতরে file upload করুন।
+        </p>
+
+    </div>
+
+
+
+    <!-- ERROR -->
+
+    <div
+        id="error"
+        class="error"
+        style="display:none;"
+    >
+
+        Gallery load করতে সমস্যা হয়েছে।
+
+        <br>
+
+        কিছুক্ষণ পরে আবার চেষ্টা করুন।
+
+    </div>
+
+
+</main>
+
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+    <a
+        href="index.html"
+        class="site-logo"
+    >
+
+        <img
+            src="images/logo/logo.png"
+            alt="Mondal Digital Studio"
+        >
+
+    </a>
+
+
+    <p>
+        Wedding Photography &
+        Cinematic Videography
+    </p>
+
+
+    <div class="footer-links">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="index.html#services">
+            Services
+        </a>
+
+        <a href="gallery.html">
+            Gallery
+        </a>
+
+        <a href="index.html#about">
+            About
+        </a>
+
+        <a href="index.html#contact">
+            Contact
+        </a>
+
+    </div>
+
+
+    <div class="copyright">
+
+        © 2026 Mondal Digital Studio.
+        All Rights Reserved.
+
+    </div>
+
+</footer>
+
+
+
+<script>
+
+
+/* =================================
+   NEW APPS SCRIPT URL
+================================= */
+
+const APPS_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbyfE_shZp5L0qh7fWbgKiiEwQzBgHDmHlU0MhUDLSjdPWTsGPGVOB9xQvfN5mDRm7U/exec";
+
+
+
+/* =================================
+   ELEMENTS
+================================= */
+
+const galleryGrid =
+    document.getElementById(
+        "galleryGrid"
+    );
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+const empty =
+    document.getElementById(
+        "empty"
+    );
+
+const errorBox =
+    document.getElementById(
+        "error"
+    );
+
+
+
+/* =================================
+   LOAD GALLERY
+================================= */
+
+async function loadGallery(
+    folderName,
+    button
+) {
+
+
+    /* ACTIVE BUTTON */
+
+    document
+        .querySelectorAll(".gallery-btn")
+        .forEach(function(btn) {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    if (button) {
+
+        button.classList.add(
+            "active"
+        );
+
+    }
+
+
+    /* RESET */
+
+    galleryGrid.innerHTML = "";
+
+    loading.style.display =
+        "block";
+
+    empty.style.display =
+        "none";
+
+    errorBox.style.display =
+        "none";
+
+
+    try {
+
+
+        const url =
+            APPS_SCRIPT_URL +
+            "?action=gallery&service=" +
+            encodeURIComponent(
+                folderName
+            ) +
+            "&t=" +
+            Date.now();
+
+
+        const response =
+            await fetch(url, {
+                cache: "no-store"
+            });
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Server error"
+            );
+
+        }
+
+
+        const files =
+            await response.json();
+
+
+        loading.style.display =
+            "none";
+
+
+        /* NO FILE */
+
+        if (
+            !files ||
+            files.length === 0
+        ) {
+
+            empty.style.display =
+                "block";
+
+            return;
+
+        }
+
+
+        /* SHOW FILES */
+
+        files.forEach(function(file) {
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "gallery-card";
+
+
+            /* PHOTO */
+
+            if (
+                file.type ===
+                "photo"
+            ) {
+
+
+                card.innerHTML = `
+
+                    <a
+                        href="${file.url}"
+                        target="_blank"
+                    >
+
+                        <img
+                            src="${file.url}&t=${Date.now()}"
+                            alt="${escapeHtml(file.name)}"
+                            loading="lazy"
+                        >
+
+                    </a>
+
+                    <div class="gallery-name">
+                        ${escapeHtml(file.name)}
+                    </div>
+
+                `;
+
+            }
+
+
+            /* VIDEO */
+
+            else if (
+                file.type ===
+                "video"
+            ) {
+
+
+                card.innerHTML = `
+
+                    <iframe
+                        src="${file.url}"
+                        allow="autoplay; fullscreen"
+                        allowfullscreen
+                    ></iframe>
+
+                    <div class="gallery-name">
+                        ${escapeHtml(file.name)}
+                    </div>
+
+                `;
+
+            }
+
+
+            galleryGrid.appendChild(
+                card
+            );
+
+        });
+
+
+    }
+
+
+    catch (error) {
+
+        console.error(error);
+
+        loading.style.display =
+            "none";
+
+        errorBox.style.display =
+            "block";
+
+    }
+
+}
+
+
+
+/* =================================
+   HTML ESCAPE
+================================= */
+
+function escapeHtml(text) {
+
+    return String(text || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+/* =================================
+   FIRST LOAD
+================================= */
+
+loadGallery(
+    "haldi-photo",
+    document.querySelector(
+        ".gallery-btn"
+    )
+);
+
+
+</script>
+
+
+</body>
+
+</html>
