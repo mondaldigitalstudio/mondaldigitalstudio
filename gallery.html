@@ -162,6 +162,8 @@
     pointer-events: none;
 
     transition: .3s;
+
+    z-index: 2;
 }
 
 .video-wrapper:hover .video-play-button {
@@ -184,6 +186,120 @@
     border: 0;
 
     background: #000;
+}
+
+
+/* =========================
+   VIDEO FULLSCREEN
+========================= */
+
+.video-fullscreen {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: #000;
+
+    z-index: 999999;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.video-fullscreen.show {
+    display: flex;
+}
+
+.video-fullscreen iframe {
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+
+    background: #000;
+}
+
+
+/* =========================
+   VIDEO FULLSCREEN CLOSE
+========================= */
+
+.video-fullscreen-close {
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    width: 48px;
+    height: 48px;
+
+    border: 1px solid #d4af37;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.8);
+
+    color: #d4af37;
+
+    font-size: 30px;
+
+    line-height: 42px;
+
+    cursor: pointer;
+
+    z-index: 1000001;
+
+    transition: .3s;
+}
+
+.video-fullscreen-close:hover {
+    background: #d4af37;
+    color: #080808;
+}
+
+
+/* =========================
+   FULLSCREEN BUTTON
+========================= */
+
+.video-fullscreen-button {
+    position: absolute;
+
+    right: 12px;
+    bottom: 12px;
+
+    width: 44px;
+    height: 44px;
+
+    border: 1px solid #d4af37;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.8);
+
+    color: #d4af37;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: .3s;
+}
+
+.video-fullscreen-button:hover {
+    background: #d4af37;
+    color: #080808;
 }
 
 
@@ -509,6 +625,26 @@
         font-size: 21px;
     }
 
+    .video-fullscreen-button {
+        width: 40px;
+        height: 40px;
+
+        right: 8px;
+        bottom: 8px;
+
+        font-size: 19px;
+    }
+
+    .video-fullscreen-close {
+        top: 10px;
+        right: 10px;
+
+        width: 42px;
+        height: 42px;
+
+        font-size: 25px;
+        line-height: 36px;
+    }
 
     .photo-lightbox {
         padding: 60px 45px 70px;
@@ -848,6 +984,27 @@
 
 
 <!-- =========================
+     VIDEO FULLSCREEN
+========================= -->
+
+<div
+    id="videoFullscreen"
+    class="video-fullscreen"
+>
+
+    <button
+        id="videoFullscreenClose"
+        class="video-fullscreen-close"
+        aria-label="Close fullscreen"
+    >
+        ×
+    </button>
+
+</div>
+
+
+
+<!-- =========================
      FOOTER
 ========================= -->
 
@@ -913,7 +1070,6 @@
 
 /* =================================
    APPS SCRIPT URL
-   SAME URL - NOTHING CHANGED
 ================================= */
 
 const APPS_SCRIPT_URL =
@@ -967,6 +1123,22 @@ const lightboxLoading =
     document.getElementById("lightboxLoading");
 
 
+/* =================================
+   VIDEO FULLSCREEN ELEMENTS
+================================= */
+
+const videoFullscreen =
+    document.getElementById("videoFullscreen");
+
+const videoFullscreenClose =
+    document.getElementById(
+        "videoFullscreenClose"
+    );
+
+
+let fullscreenVideoFrame = null;
+
+
 
 /* =================================
    CURRENT PHOTOS
@@ -981,15 +1153,6 @@ let currentPhotoIndex = 0;
 /* =================================
    THUMBNAIL URL
 ================================= */
-
-/*
-   Google Drive-এর file URL-কে
-   thumbnail URL করার চেষ্টা।
-
-   Apps Script-এর original URL
-   না বদলালে fallback হিসেবে
-   original URL ব্যবহার হবে।
-*/
 
 function getThumbnailUrl(url) {
 
@@ -1076,8 +1239,6 @@ async function loadGallery(
 ) {
 
 
-    /* ACTIVE BUTTON */
-
     document
         .querySelectorAll(".gallery-btn")
         .forEach(function(btn) {
@@ -1094,8 +1255,6 @@ async function loadGallery(
     }
 
 
-    /* RESET */
-
     galleryGrid.innerHTML = "";
 
     currentPhotos = [];
@@ -1111,6 +1270,8 @@ async function loadGallery(
 
 
     closeLightbox();
+
+    closeVideoFullscreen();
 
 
     try {
@@ -1149,8 +1310,6 @@ async function loadGallery(
         loading.style.display = "none";
 
 
-        /* NO FILE */
-
         if (
             !files ||
             files.length === 0
@@ -1163,8 +1322,6 @@ async function loadGallery(
         }
 
 
-        /* SAVE ONLY PHOTOS */
-
         currentPhotos =
             files.filter(function(file) {
 
@@ -1172,10 +1329,6 @@ async function loadGallery(
 
             });
 
-
-        /* =========================
-           SHOW FILES
-        ========================= */
 
         files.forEach(
             function(file) {
@@ -1245,11 +1398,6 @@ async function loadGallery(
                         "error",
                         function() {
 
-                            /*
-                               Thumbnail fail হলে
-                               original URL fallback।
-                            */
-
                             if (
                                 image.src !==
                                 file.url
@@ -1286,14 +1434,6 @@ async function loadGallery(
                     file.type === "video"
                 ) {
 
-
-                    /*
-                       প্রথমে iframe load হচ্ছে না।
-
-                       এতে page দ্রুত load হবে।
-                       User click করলে তবেই
-                       actual video iframe তৈরি হবে।
-                    */
 
                     card.innerHTML = `
 
@@ -1375,11 +1515,6 @@ function playVideo(
     }
 
 
-    /*
-       Already loaded হলে আবার
-       iframe তৈরি করবে না।
-    */
-
     if (
         wrapper.dataset.loaded === "true"
     ) {
@@ -1402,14 +1537,341 @@ function playVideo(
             referrerpolicy="no-referrer-when-downgrade"
         ></iframe>
 
+        <button
+            class="video-fullscreen-button"
+            type="button"
+            aria-label="Fullscreen"
+            title="Fullscreen"
+        >
+            ⛶
+        </button>
+
     `;
+
+
+    const iframe =
+        wrapper.querySelector("iframe");
+
+
+    const fullscreenButton =
+        wrapper.querySelector(
+            ".video-fullscreen-button"
+        );
+
+
+    /*
+       Fullscreen button click করলে
+       শুধু video fullscreen হবে।
+       নতুন tab/window খুলবে না।
+    */
+
+    fullscreenButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            openVideoFullscreen(
+                videoUrl
+            );
+
+        }
+    );
 
 }
 
 
 
 /* =================================
-   OPEN LIGHTBOX
+   OPEN VIDEO FULLSCREEN
+================================= */
+
+function openVideoFullscreen(
+    videoUrl
+) {
+
+    if (!videoUrl) {
+        return;
+    }
+
+
+    closeLightbox();
+
+
+    videoFullscreen.innerHTML = `
+
+        <button
+            id="videoFullscreenClose"
+            class="video-fullscreen-close"
+            aria-label="Close fullscreen"
+            type="button"
+        >
+            ×
+        </button>
+
+        <iframe
+            src="${videoUrl}"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+            playsinline
+            referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+
+    `;
+
+
+    fullscreenVideoFrame =
+        videoFullscreen.querySelector(
+            "iframe"
+        );
+
+
+    videoFullscreen.classList.add(
+        "show"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    const closeButton =
+        videoFullscreen.querySelector(
+            ".video-fullscreen-close"
+        );
+
+
+    closeButton.addEventListener(
+        "click",
+        closeVideoFullscreen
+    );
+
+
+    /*
+       Browser Fullscreen API ব্যবহার করা হচ্ছে।
+       Mobile browser support থাকলে কাজ করবে।
+       API না থাকলেও একই page-এর fixed
+       fullscreen player হিসেবে থাকবে।
+    */
+
+    requestVideoFullscreen();
+
+}
+
+
+
+/* =================================
+   REQUEST FULLSCREEN
+================================= */
+
+function requestVideoFullscreen() {
+
+    const element =
+        videoFullscreen;
+
+
+    try {
+
+        if (
+            element.requestFullscreen
+        ) {
+
+            const result =
+                element.requestFullscreen();
+
+            if (
+                result &&
+                result.catch
+            ) {
+
+                result.catch(
+                    function() {}
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        if (
+            element.webkitRequestFullscreen
+        ) {
+
+            element.webkitRequestFullscreen();
+
+            return;
+
+        }
+
+
+        if (
+            element.webkitEnterFullscreen
+        ) {
+
+            element.webkitEnterFullscreen();
+
+            return;
+
+        }
+
+    }
+    catch (error) {
+
+        console.log(
+            "Fullscreen API not available"
+        );
+
+    }
+
+}
+
+
+
+/* =================================
+   CLOSE VIDEO FULLSCREEN
+================================= */
+
+function closeVideoFullscreen() {
+
+
+    /*
+       Browser fullscreen mode থেকে
+       আগে বের হওয়ার চেষ্টা।
+    */
+
+    try {
+
+        if (
+            document.fullscreenElement &&
+            document.exitFullscreen
+        ) {
+
+            const result =
+                document.exitFullscreen();
+
+            if (
+                result &&
+                result.catch
+            ) {
+
+                result.catch(
+                    function() {}
+                );
+
+            }
+
+        }
+
+        else if (
+            document.webkitFullscreenElement &&
+            document.webkitExitFullscreen
+        ) {
+
+            document.webkitExitFullscreen();
+
+        }
+
+    }
+    catch (error) {
+
+        console.log(
+            "Exit fullscreen failed"
+        );
+
+    }
+
+
+    if (fullscreenVideoFrame) {
+
+        fullscreenVideoFrame.src =
+            "about:blank";
+
+        fullscreenVideoFrame = null;
+
+    }
+
+
+    videoFullscreen.classList.remove(
+        "show"
+    );
+
+
+    document.body.style.overflow = "";
+
+}
+
+
+
+/* =================================
+   ESCAPE FULLSCREEN
+================================= */
+
+document.addEventListener(
+    "fullscreenchange",
+    function() {
+
+        /*
+           Browser-এর native fullscreen
+           থেকে বের হলে custom player-ও
+           বন্ধ হবে।
+        */
+
+        if (
+            !document.fullscreenElement &&
+            videoFullscreen.classList.contains(
+                "show"
+            )
+        ) {
+
+            closeVideoFullscreen();
+
+        }
+
+    }
+);
+
+
+
+/* =================================
+   WEBKIT FULLSCREEN CHANGE
+================================= */
+
+document.addEventListener(
+    "webkitfullscreenchange",
+    function() {
+
+        if (
+            !document.webkitFullscreenElement &&
+            videoFullscreen.classList.contains(
+                "show"
+            )
+        ) {
+
+            closeVideoFullscreen();
+
+        }
+
+    }
+);
+
+
+
+/* =================================
+   VIDEO FULLSCREEN CLOSE BUTTON
+================================= */
+
+videoFullscreenClose.addEventListener(
+    "click",
+    closeVideoFullscreen
+);
+
+
+
+/* =================================
+   OPEN PHOTO LIGHTBOX
 ================================= */
 
 function openLightbox(index) {
@@ -1430,7 +1892,8 @@ function openLightbox(index) {
     photoLightbox.classList.add("show");
 
 
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow =
+        "hidden";
 
 
     updateLightbox();
@@ -1455,11 +1918,6 @@ function updateLightbox() {
         return;
     }
 
-
-    /*
-       Previous image remove
-       করে নতুন image load।
-    */
 
     lightboxImage.classList.remove(
         "loaded"
@@ -1489,8 +1947,6 @@ function updateLightbox() {
         currentPhotos.length;
 
 
-    /* ARROWS */
-
     if (
         currentPhotos.length <= 1
     ) {
@@ -1513,11 +1969,6 @@ function updateLightbox() {
 
     }
 
-
-    /*
-       Full quality photo
-       ONLY NOW load হবে।
-    */
 
     const fullUrl =
         getFullPhotoUrl(
@@ -1547,11 +1998,6 @@ function updateLightbox() {
 
     newImage.onerror =
         function() {
-
-            /*
-               Converted URL fail হলে
-               original Apps Script URL।
-            */
 
             lightboxImage.src =
                 photo.url;
@@ -1642,7 +2088,7 @@ function nextPhoto() {
 
 
 /* =================================
-   CLOSE LIGHTBOX
+   CLOSE PHOTO LIGHTBOX
 ================================= */
 
 function closeLightbox() {
@@ -1652,7 +2098,20 @@ function closeLightbox() {
     );
 
 
-    document.body.style.overflow = "";
+    /*
+       Video fullscreen খোলা থাকলে
+       body overflow যেন ঠিক থাকে।
+    */
+
+    if (
+        !videoFullscreen.classList.contains(
+            "show"
+        )
+    ) {
+
+        document.body.style.overflow = "";
+
+    }
 
 
     lightboxImage.src = "";
@@ -1671,7 +2130,7 @@ function closeLightbox() {
 
 
 /* =================================
-   BUTTON EVENTS
+   PHOTO BUTTON EVENTS
 ================================= */
 
 lightboxClose.addEventListener(
@@ -1694,7 +2153,7 @@ lightboxNext.addEventListener(
 
 
 /* =================================
-   BACKGROUND CLICK
+   PHOTO BACKGROUND CLICK
 ================================= */
 
 photoLightbox.addEventListener(
@@ -1722,6 +2181,32 @@ photoLightbox.addEventListener(
 document.addEventListener(
     "keydown",
     function(event) {
+
+
+        /*
+           Video fullscreen-এর সময়
+           ESC browser/custom fullscreen
+           handle করবে।
+        */
+
+        if (
+            videoFullscreen.classList.contains(
+                "show"
+            )
+        ) {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                closeVideoFullscreen();
+
+            }
+
+            return;
+
+        }
+
 
         if (
             !photoLightbox.classList.contains(
